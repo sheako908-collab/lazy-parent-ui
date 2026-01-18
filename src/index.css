@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #0ff047;
+  --color-primary-dark: #0ab835;
+  --color-background-light: #f5f8f6;
+  --color-background-dark: #102214;
+  --color-surface-dark: #193420;
+  --color-border-dark: #32673f;
+  --color-text-secondary: #91ca9f;
+  --color-ai-primary: #ec135b;
+  --color-ai-orange: #fb923c;
+  --color-ai-green-light: #dcfce7;
+  --color-ai-green-dark: #064e3b;
+  --color-task-primary: #256af4;
+
+  --shadow-glow: 0 0 15px rgba(15, 240, 71, 0.3);
+  --shadow-glow-blue: 0 0 20px rgba(59, 130, 246, 0.4);
+  --shadow-glow-primary: 0 0 20px -5px rgba(236, 19, 91, 0.4);
+  --shadow-glow-orange: 0 0 20px -5px rgba(251, 146, 60, 0.4);
+  --shadow-soft: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+}
+
+@layer base {
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .animate-scanline {
+    animation: scanline 3s linear infinite;
+  }
+
+  @keyframes scanline {
+    0% {
+      transform: translateY(0);
+      opacity: 0;
+    }
+
+    10% {
+      opacity: 1;
+    }
+
+    90% {
+      opacity: 1;
+    }
+
+    100% {
+      transform: translateY(300px);
+      opacity: 0;
+    }
+  }
+
+  @keyframes bounce-slow {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-bounce-slow {
+    animation: bounce-slow 4s ease-in-out infinite;
+  }
+
+  .glass-panel {
+    background: rgba(22, 46, 27, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .bg-pattern {
+    background-image: radial-gradient(#ec135b 0.5px, transparent 0.5px),
+      radial-gradient(#ec135b 0.5px, #f8f6f6 0.5px);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+    opacity: 0.03;
+  }
+
+  .dark .bg-pattern {
+    opacity: 0.05;
+    background-image: radial-gradient(#ffffff 0.5px, transparent 0.5px),
+      radial-gradient(#ffffff 0.5px, #221016 0.5px);
+  }
+}

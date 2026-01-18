@@ -1,0 +1,1 @@
+export default () => <div className="p-8">Chat Page Placeholder</div>;

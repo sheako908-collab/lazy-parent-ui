@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  phone     String   @unique
+  password  String   // Hashed password
+  role      String   @default("parent") // "parent" | "student"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  studentProfile StudentProfile?
+  homeworks      Homework[]
+  mistakes       MistakeRecord[]
+}
+
+model StudentProfile {
+  id        String   @id @default(uuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  name      String
+  grade     String?
+  school    String?
+  createdAt DateTime @default(now())
+}
+
+model Homework {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  originalImage String?  // Path or Base64 (store path in prod, base64 ok for dev/demo)
+  ocrText       String?  // Raw text from OCR
+  cleanedText   String?  // Desensitized text
+  subject       String?  // e.g. "Math", "Chinese"
+  status        String   @default("processed") // "processing", "processed", "checked"
+  createdAt     DateTime @default(now())
+  
+  mistakes      MistakeRecord[]
+}
+
+model MistakeRecord {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  homeworkId   String?
+  homework     Homework? @relation(fields: [homeworkId], references: [id])
+  questionText String
+  answer       String?
+  analysis     String?  // AI analysis of why it was wrong
+  subject      String?
+  reviewCount  Int      @default(0)
+  isMastered   Boolean  @default(false)
+  createdAt    DateTime @default(now())
+}
