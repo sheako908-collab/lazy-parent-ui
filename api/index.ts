@@ -13,12 +13,13 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// 基础路由匹配
-app.get('/api/health', (req: Request, res: Response) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+// 基础健康检查 - 同时支持 /api/health 和 /health
+app.get(['/api/health', '/health'], (req: Request, res: Response) => {
+    res.json({ status: 'ok', api: 'ready', timestamp: new Date().toISOString() });
 });
 
-app.get('/api/ai/info', (req: Request, res: Response) => {
+// AI 路由
+app.use(['/api/ai/info', '/ai/info'], (req, res) => {
     try {
         const aiService = AIServiceFactory.getInstance();
         res.json({
@@ -27,32 +28,20 @@ app.get('/api/ai/info', (req: Request, res: Response) => {
             status: 'ready'
         });
     } catch (error) {
-        res.status(500).json({ error: '无法获取AI服务信息' });
+        res.status(500).json({ error: 'AI Info Error' });
     }
 });
 
-app.post('/api/ai/chat', async (req: Request, res: Response) => {
-    try {
-        const { prompt, systemPrompt, temperature, maxTokens } = req.body;
-        const aiService = AIServiceFactory.getInstance();
-        const response = await aiService.chat(prompt, { systemPrompt, temperature, maxTokens });
-        res.json(response);
-    } catch (error) {
-        res.status(500).json({ error: 'AI processing failed' });
-    }
-});
-
-// 子路由挂载
-// 注意：在 Vercel 中，/api/index.ts 处理所有 /api/* 的请求
-// 所以我们挂载路由器时要统筹考虑前缀
-app.use('/api/auth', authRouter);
-app.use('/api/homework', homeworkRouter);
-app.use('/api/dashboard', dashboardRouter);
+// 核心业务路由
+// 重要：Vercel 重写后请求路径可能包含 /api 也可能不包含，这里全部兼容
+app.use(['/api/auth', '/auth'], authRouter);
+app.use(['/api/homework', '/homework'], homeworkRouter);
+app.use(['/api/dashboard', '/dashboard'], dashboardRouter);
 
 // 错误处理
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    console.error('API Error:', err);
-    res.status(500).json({ error: 'Internal Server Error' });
+    console.error('SERVER_ERROR:', err);
+    res.status(500).json({ error: 'Internal Server Error', message: err.message });
 });
 
 export default app;
