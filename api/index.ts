@@ -1,10 +1,10 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import homeworkRouter from './routes/homework.js';
-import authRouter from './routes/auth.js';
-import dashboardRouter from './routes/dashboard.js';
-import { AIServiceFactory } from './services/ai/factory.js';
+import homeworkRouter from './routes/homework';
+import authRouter from './routes/auth';
+import dashboardRouter from './routes/dashboard';
+import { AIServiceFactory } from './services/ai/factory';
 
 dotenv.config();
 
