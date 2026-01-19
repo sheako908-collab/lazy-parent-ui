@@ -1,7 +1,18 @@
 import axios from 'axios';
 
-const API_HOST = window.location.hostname;
-const API_BASE_URL = `http://${API_HOST}:3001/api`;
+const getApiBaseUrl = () => {
+    const envBaseUrl = import.meta.env.VITE_AUTH_BASE_URL as string | undefined;
+    if (envBaseUrl && envBaseUrl.trim().length > 0) {
+        return envBaseUrl.replace(/\/$/, '') + '/api'; // Append /api if strictly following structure
+    }
+    const hostname = window.location.hostname;
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        return `http://${hostname}:3001/api`;
+    }
+    return '/api';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export interface ChatMessage {
     role: 'user' | 'model';

@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import homeworkRouter from './routes/homework';
 import authRouter from './routes/auth';
 import dashboardRouter from './routes/dashboard';
+import aiRouter from './routes/ai';
 import { AIServiceFactory } from './services/ai/factory';
 
 dotenv.config();
@@ -19,7 +20,11 @@ app.get(['/api/health', '/health'], (req: Request, res: Response) => {
 });
 
 // AI 路由
-app.use(['/api/ai/info', '/ai/info'], (req, res) => {
+
+
+// AI 路由
+// AI 路由
+app.use(['/api/ai/info', '/ai/info'], (req: Request, res: Response) => {
     try {
         const aiService = AIServiceFactory.getInstance();
         res.json({
@@ -31,6 +36,7 @@ app.use(['/api/ai/info', '/ai/info'], (req, res) => {
         res.status(500).json({ error: 'AI Info Error' });
     }
 });
+app.use(['/api/ai', '/ai'], aiRouter);
 
 // 核心业务路由
 // 重要：Vercel 重写后请求路径可能包含 /api 也可能不包含，这里全部兼容
