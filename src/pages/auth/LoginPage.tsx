@@ -16,8 +16,12 @@ const LoginPage: React.FC = () => {
         }
 
         try {
-            await AuthService.login(phone, code);
-            navigate('/student/workbench');
+            const response = await AuthService.login(phone, code);
+            if (response.user.role === 'parent') {
+                navigate('/parent/dashboard');
+            } else {
+                navigate('/student/workbench');
+            }
         } catch (loginError) {
             try {
                 // If login fails (user not found), attempt registration
