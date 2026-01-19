@@ -55,24 +55,24 @@ export const AuthService = {
             return response.data;
         } catch (error: any) {
             console.error('Login failed:', error);
-            throw new Error(error.response?.data?.error || '登录失败，请检查网络或账号');
+            throw new Error(error.response?.data?.error || '登录失败，请检查网络或验证码');
         }
     },
 
     /**
      * 用户注册 (自动登录)
      */
-    register: async (phone: string, role: 'parent' | 'student' = 'parent'): Promise<AuthResponse> => {
+    register: async (phone: string, role: 'parent' | 'student' = 'parent', password: string = 'password'): Promise<AuthResponse> => {
         try {
             const response = await axios.post<AuthResponse>(`${API_BASE_URL}/register`, {
                 phone,
-                password: 'password', // 默认密码，Demo 用
+                password,
                 role
             });
 
             if (response.data.user) {
                 localStorage.setItem('user', JSON.stringify(response.data.user));
-                localStorage.setItem('token', 'mock-register-token');
+                localStorage.setItem('token', response.data.token || 'mock-register-token');
             }
 
             return response.data;
