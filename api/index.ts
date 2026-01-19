@@ -56,14 +56,14 @@ app.post('/api/ai/chat', async (req: Request, res: Response) => {
     }
 });
 
-// 认证路由
-app.use('/api/auth', authRouter);
+// 认证路由 - 在 Vercel 环境下，路径可能已经被重写去掉了 /api 前缀
+app.use(['/api/auth', '/auth'], authRouter);
 
 // 作业处理路由
-app.use('/api/homework', homeworkRouter);
+app.use(['/api/homework', '/homework'], homeworkRouter);
 
 // 仪表盘路由
-app.use('/api/dashboard', dashboardRouter);
+app.use(['/api/dashboard', '/dashboard'], dashboardRouter);
 
 // 错误处理中间件
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
