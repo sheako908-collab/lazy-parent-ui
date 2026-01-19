@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import homeworkRouter from './routes/homework.js';
@@ -6,24 +6,19 @@ import authRouter from './routes/auth.js';
 import dashboardRouter from './routes/dashboard.js';
 import { AIServiceFactory } from './services/ai/factory.js';
 
-// 加载环境变量
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
-
-// 中间件
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// 健康检查
-app.get('/api/health', (req: Request, res: Response) => {
+app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// AI模型信息接口
-app.get('/api/ai/info', (req: Request, res: Response) => {
+// AI 接口
+app.get('/api/ai/info', (req, res) => {
     try {
         const aiService = AIServiceFactory.getInstance();
         res.json({
@@ -36,54 +31,25 @@ app.get('/api/ai/info', (req: Request, res: Response) => {
     }
 });
 
-// AI聊天接口
-app.post('/api/ai/chat', async (req: Request, res: Response) => {
+app.post('/api/ai/chat', async (req, res) => {
     try {
         const { prompt, systemPrompt, temperature, maxTokens } = req.body;
-        if (!prompt) {
-            return res.status(400).json({ error: '缺少prompt参数' });
-        }
         const aiService = AIServiceFactory.getInstance();
-        const response = await aiService.chat(prompt, {
-            systemPrompt,
-            temperature,
-            maxTokens
-        });
+        const response = await aiService.chat(prompt, { systemPrompt, temperature, maxTokens });
         res.json(response);
     } catch (error) {
-        console.error('AI Chat Error:', error);
         res.status(500).json({ error: 'AI processing failed' });
     }
 });
 
-// 认证路由 - 在 Vercel 环境下，路径可能已经被重写去掉了 /api 前缀
-app.use(['/api/auth', '/auth'], authRouter);
+// 路由挂载
+app.use('/api/auth', authRouter);
+app.use('/api/homework', homeworkRouter);
+app.use('/api/dashboard', dashboardRouter);
 
-// 作业处理路由
-app.use(['/api/homework', '/homework'], homeworkRouter);
-
-// 仪表盘路由
-app.use(['/api/dashboard', '/dashboard'], dashboardRouter);
-
-// 错误处理中间件
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-    console.error('服务器错误:', err);
-    res.status(500).json({
-        error: '服务器内部错误',
-        message: process.env.NODE_ENV === 'production' ? '请稍后重试' : err.message,
-    });
-});
-
-// 404处理
-app.use((req: Request, res: Response) => {
-    res.status(404).json({ error: '接口不存在' });
-});
-
-// 启动服务器 (仅在本地开发环境)
-if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
-    app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-    });
-}
+// 核心：处理 Vercel 将请求发送到 /api 的情况
+app.use('/auth', authRouter);
+app.use('/homework', homeworkRouter);
+app.use('/dashboard', dashboardRouter);
 
 export default app;
