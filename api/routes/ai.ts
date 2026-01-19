@@ -1,9 +1,9 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 
 const router = express.Router();
 
 // Mock Chat Endpoint
-router.post('/chat', (req, res) => {
+router.post('/chat', (req: Request, res: Response) => {
     const { prompt } = req.body;
 
     // Simple verification check to ensure backend is reachable

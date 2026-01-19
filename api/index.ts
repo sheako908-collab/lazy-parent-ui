@@ -19,11 +19,7 @@ app.get(['/api/health', '/health'], (req: Request, res: Response) => {
     res.json({ status: 'ok', api: 'ready', timestamp: new Date().toISOString() });
 });
 
-// AI 路由
 
-
-// AI 路由
-// AI 路由
 app.use(['/api/ai/info', '/ai/info'], (req: Request, res: Response) => {
     try {
         const aiService = AIServiceFactory.getInstance();
