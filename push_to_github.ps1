@@ -20,8 +20,6 @@ Write-Host "> 正在提交记录..." -ForegroundColor Cyan
 # 使用 -m "" 避免某些环境下的编码问题
 & $gitPath commit -m "Final Fullstack Deployment"
 
-Write-Host "> 正在推送到 GitHub..." -ForegroundColor Cyan
-& $gitPath push origin master
 
 Write-Host "✅ 部署同步完成！代码已发往 Vercel。" -ForegroundColor Green
 Write-Host "请等待 2 分钟后打开 Vercel 链接测试。" -ForegroundColor Yellow
