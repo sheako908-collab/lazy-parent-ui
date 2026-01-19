@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import LoginPage from './pages/auth/LoginPage';
 import SchoolSelectionPage from './pages/onboarding/SchoolSelectionPage';
 import ParentDashboard from './pages/parent/ParentDashboard';
@@ -13,6 +14,24 @@ import ChatPage from './pages/student/ChatPage';
 import './index.css';
 
 function App() {
+  // 自动设置模拟用户信息，确保由于重定向导致的数据可用性
+  useEffect(() => {
+    const mockUser = {
+      id: 'mock-user-parent',
+      phone: '13888888888',
+      role: 'parent',
+      studentProfile: {
+        name: '演示同学',
+        grade: '三年级',
+        school: '实验中心小学'
+      }
+    };
+    if (!localStorage.getItem('user')) {
+      localStorage.setItem('user', JSON.stringify(mockUser));
+      localStorage.setItem('token', 'mock-demo-token');
+    }
+  }, []);
+
   return (
     <BrowserRouter>
       <Routes>
@@ -26,10 +45,11 @@ function App() {
         <Route path="/student/learning" element={<LearningPage />} />
         <Route path="/student/center" element={<UserCenterPage />} />
         <Route path="/student/mistakes" element={<MistakeBookPage />} />
-        <Route path="/student/chat" element={<ChatPage />} /> {/* Added new route for ChatPage */}
+        <Route path="/student/chat" element={<ChatPage />} />
 
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        {/* 默认跳转到家长端 */}
+        <Route path="/" element={<Navigate to="/parent/dashboard" replace />} />
+        <Route path="*" element={<Navigate to="/parent/dashboard" replace />} />
       </Routes>
     </BrowserRouter>
   );
