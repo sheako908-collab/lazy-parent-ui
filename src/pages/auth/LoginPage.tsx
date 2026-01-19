@@ -16,14 +16,16 @@ const LoginPage: React.FC = () => {
         }
 
         try {
+            // Full version: always attempt real login through AuthService
             await AuthService.login(phone);
             navigate('/student/workbench');
         } catch (loginError) {
             try {
+                // If login fails (user not found), attempt registration
                 await AuthService.register(phone, 'student');
                 navigate('/student/workbench');
             } catch (registerError) {
-                alert('登录失败，请重试');
+                alert('登录失败，请重写检查手机号或网络');
             }
         }
     };

@@ -1,13 +1,17 @@
 import axios from 'axios';
 
-// 定义 API 基础 URL
+// 定义 API 基础 URL，优先使用环境变量（便于切换 CloudBase 等后端）
 const getApiBaseUrl = () => {
+    const envBaseUrl = import.meta.env.VITE_AUTH_BASE_URL as string | undefined;
+    if (envBaseUrl && envBaseUrl.trim().length > 0) {
+        return envBaseUrl.replace(/\/$/, '');
+    }
+
     const hostname = window.location.hostname;
-    // 如果是 local 则使用 3001，如果是云端则保留空或使用环境变量（Vercel 部署建议使用环境变量）
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
         return `http://${hostname}:3001/api/auth`;
     }
-    // 预留给 Vercel 生产环境
+
     return '/api/auth';
 };
 
