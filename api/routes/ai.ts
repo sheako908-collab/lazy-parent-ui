@@ -11,17 +11,15 @@ router.post('/chat', (req: Request, res: Response) => {
     console.log('Received chat prompt:', prompt);
 
     // Simulated AI response
-    setTimeout(() => {
-        res.json({
-            content: `【AI 老师】收到你的问题："${prompt}"。\n这是模拟的 AI 回复。在正式版本中，这里会连接 Gemini 或 OpenAI 模型进行解答。目前我是你的智能助教，随时准备好帮助你！`,
-            model: 'mock-gpt-4',
-            usage: {
-                promptTokens: 10,
-                completionTokens: 20,
-                totalTokens: 30
-            }
-        });
-    }, 500); // Simulate network delay
+    res.json({
+        content: `【AI 老师】收到你的问题："${prompt}"。\n这是模拟的 AI 回复。在正式版本中，这里会连接 Gemini 或 OpenAI 模型进行解答。目前我是你的智能助教，随时准备好帮助你！`,
+        model: 'mock-gpt-4',
+        usage: {
+            promptTokens: 10,
+            completionTokens: 20,
+            totalTokens: 30
+        }
+    });
 });
 
 export default router;
